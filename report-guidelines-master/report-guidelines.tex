@@ -1,0 +1,690 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{natbib}
+
+\setlength{\oddsidemargin}{0mm}
+\setlength{\evensidemargin}{-14mm}
+\setlength{\marginparwidth}{0cm}
+\setlength{\marginparsep}{0cm}
+\setlength{\topmargin}{2mm}
+\setlength{\headheight}{0mm}
+\setlength{\headsep}{0cm}
+\setlength{\textheight}{240mm}
+\setlength{\textwidth}{168mm}
+\setlength{\topskip}{0mm}
+\setlength{\footskip}{10mm}
+
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\refsec}[1]{\mbox{Section~\ref{sec:#1}}}
+\newcommand{\refapp}[1]{\mbox{Appendix~\ref{sec:#1}}}
+\newcommand{\refeqn}[1]{\mbox{(\ref{eqn:#1})}}
+\newcommand{\reffig}[1]{\mbox{Figure~\ref{fig:#1}}}
+\newcommand{\ud}{\mathrm{d}}                    % upright d (derivative)
+
+\newcounter{foo}
+\newcounter{bar}
+
+\bibliographystyle{apalike}
+\renewcommand{\bibname}{References}
+\renewcommand{\bibsection}{\section{\bibname}}
+\renewcommand{\cite}{\citep}
+
+
+\title{\vspace{-1cm} A guide to writing technical reports}
+\author{M. P. Hayes \\
+        \small Department of Electrical and Computer Engineering\\
+        \small University of Canterbury}
+\date{\small Version 4.3}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+
+This report provides a guide to writing technical reports.  It is
+targeted at undergraduate engineering students.  It provides a
+recommended structure for reports and makes suggestions on
+presentation and writing.
+
+
+\tableofcontents
+
+
+\section{Introduction}
+
+Writing your first technical reports is not easy.  The goal of a
+technical report is to express findings in a clear and unambiguous
+manner.
+
+This report is targeted at undergraduate engineering students to help
+them write a technical report.  It is structured as follows.
+\refsec{structure} presents a suggested structure for a report.  It
+describes the key sections found in a report and provides
+recommendations.  This is followed by suggestions for writing style,
+grammar, and spelling in \refsec{writing_style}.  Presentation
+suggestions are provided in \refsec{presentation} and conclusions are
+drawn in \refsec{conclusion}.  Finally, lists of gaucheries and weasel
+words are in \refapp{gaucheries} and \refapp{weasel_words}.
+
+
+
+
+\section{Structure}
+\label{sec:structure}
+
+Here is a typical top-level structure of a report:
+\begin{flushleft}
+  Title\\
+  Abstract\\
+  Table of contents\\
+  1 Introduction\\
+  2 Background\\
+  3 Method\\
+  4 Results\\
+  5 Discussion\\
+  6 Conclusion\\
+  7 Acknowledgements (if required)\\
+  8 References\\
+  A Appendix A\\
+  B Appendix B\\
+\end{flushleft}
+%
+The title, abstract, introduction, conclusion, and references are not
+optional.  Some reports have no appendices; this example has two.  One
+might be for schematics and the other for software listings.
+
+
+\begin{list}{S-\arabic{foo}}{\usecounter{foo}}
+
+\item All sections starting from the introduction should be numbered.
+
+\item Sections of the report should be referenced by number.  For
+  example, \refsec{writing_style} discusses the writing style that
+  should be used for a report.  Do not refer to the section above or
+  below since they sometimes move around.
+
+\item Do not use too many levels of subsections.  Some styles suggest
+  only two levels; three is okay.
+\end{list}
+
+
+
+\subsection{Abstract}
+
+The abstract is sometimes called an executive summary.  It usually
+comes before the table of contents.
+
+The abstract for a short report contains no more than three or four
+paragraphs.  Its purpose is to allow the reader to quickly determine
+if it is worth reading the rest of the report.
+
+  
+\begin{list}{A-\arabic{foo}}{\usecounter{foo}}
+
+\item The abstract is not numbered.
+
+\item The abstract should summarise what is in the report, in particular, it
+should specify the key findings.  For example, this report presents
+suggestions for how to write a report, \ldots
+
+%\item Avoid too much detail in the abstract.  A reader wants to know
+%what the report is about, the major techniques/components used, and
+%the outcome of the project.
+\end{list}
+\end{abstract}
+
+
+\subsection{Introduction}
+
+
+This section introduces the purpose of the report and what it to be
+found in it.  There is some minor repetition with the abstract but the
+introduction should be more detailed.
+
+\begin{list}{I-\arabic{foo}}{\usecounter{foo}}
+
+\item A report must have an introduction.
+
+\item The introduction is the first numbered section.  
+
+\item You should describe the top-level concepts before diving into
+  the minut\ae.  A simplified system diagram is useful here.
+
+\item The end of the introduction should contain a \emph{roadmap} to
+inform your reader how you have organised your material.  The table of
+contents assists a reader who has an idea what they are looking for,
+say someone who has already read the report.
+
+For example, \ldots Guidelines for the writing style to be used for a
+technical report are given in \refsec{writing_style}.  This is
+followed by \ldots
+\end{list}
+
+
+\subsection{Conclusion}
+
+
+\begin{list}{C-\arabic{foo}}{\usecounter{foo}}
+\item All reports should have a conclusion.  No exceptions.  This is
+what your boss will read first.
+
+\end{list}
+
+
+
+
+\subsection{References}
+\label{sec:referencing}
+
+
+\begin{list}{R-\arabic{foo}}{\usecounter{foo}}
+
+\item All reports should have a references section.  No, a
+  bibliography does not count!  When you make a statement you need to
+  be able to back it up.  If the reader thinks you have made a mistake
+  or would like to know more details, they can look up the source.
+  The references should be numbered\footnote{Personally, I prefer the
+    APA style as commonly used for theses where the author's name and
+    year is used instead of a number.} and give full details.
+
+\item A reference section is not just a collection of URLs.  These are
+  transitory compared to books, papers, and patents.  If you use a URL
+  add the date when the web page was last updated.
+
+\item All references must be cited in the report.
+
+\item Use the specified reference style.  The APA style is preferable
+  for theses and long reports where there are a large number of
+  references.  For short reports, the IEEE transactions style is
+  common.
+\end{list}
+
+
+\subsection{Appendices}
+
+\begin{list}{X-\arabic{foo}}{\usecounter{foo}}
+\item Software listings belong in an appendix.  Code fragments are
+  okay for the main report body to illustrate a point.
+
+\item Detailed tables of experimental results belong in an appendix.
+  The main body of the report should only show the general results.
+
+\item Schematics listings belong in an appendix.  The body of the
+  report should use block diagrams or simple circuits.
+
+\end{list}
+
+
+
+
+
+
+% Rule 1 follow corporate style
+
+
+\section{Writing}
+\label{sec:writing_style}
+
+There are many writing styles.  A technical report should be written
+to be concise and unambiguous.  If the reader thinks that your grammar
+and spelling is sloppy, they will assume that your arguments are
+sloppy.
+
+
+This section considers the writing tense in \refsec{tense}, followed
+by suggestions for sentences in \refsec{sentences}, paragraphs in
+\refsec{paragraphs}, punctuation in \refsec{punctuation}, and spelling
+in \refsec{spelling}.  It concludes with suggestions for usage of
+however and related words in \refsec{however}.  For more suggestions,
+refer to the excellent little book called the ``Elements of Style''
+\cite{Strunk_1979}.
+
+
+\subsection{Tense}
+\label{sec:tense}
+
+\begin{list}{W-\arabic{foo}}{\usecounter{foo}}
+
+\item A report should be primarily written in the present tense except
+  when describing the results of experiments.  In this case, use the
+  past tense.
+
+\item There is rarely a need for the future tense.  Rather than saying
+  that referencing \emph{will} be considered in \refsec{referencing},
+  say that referencing \emph{is} considered in \refsec{referencing}.
+
+\item Ideally reports should be written in the third person although
+  it is acceptable in some parts to use the first person, especially
+  in an introduction.
+
+\item Only use the first person plural if there are multiple
+  authors\footnote{James Clerk Maxwell sometimes added his dog as an
+    author so he could use we in a paper instead of I.}.
+
+\item The passive voice should be avoided except when describing
+  experimental procedure.
+
+\setcounter{bar}{\value{foo}}
+\end{list}
+
+
+\subsection{Sentences}
+\label{sec:sentences}
+
+The key to a technical report is its brevity and lack of ambiguity.
+You are not expected to win the reader over by your rhetoric and fancy
+sentence composition.
+
+\begin{list}{W-\arabic{foo}}{\usecounter{foo}}
+\setcounter{foo}{\value{bar}}
+\item Most students write sentences that are too long\footnote{I used
+  to.}.  Long sentences are hard for the reader to parse and can
+  introduce ambiguity.  
+
+\item There should be only one idea per sentence.
+
+\item Do not join independent clauses with a comma.  Start a new
+  sentence.
+
+\item When a sentence is first written it usually contains redundant
+  words since this is how we speak.  A competent writer will remove
+  the redundant words.  The rule is ``\emph{if you can remove a word
+    from a sentence without changing its meaning, then it is not
+    needed}''.  For example, ``an instant in time'' is simply an
+  ``instant''.  An ``actual fact'' should be replaced with ``fact''.
+  See \refapp{gaucheries}.
+
+
+\item Remove weasel words, see \refapp{weasel_words}.
+
+\setcounter{bar}{\value{foo}}
+\end{list}
+
+
+\subsection{Paragraphs}
+\label{sec:paragraphs}
+
+\begin{list}{W-\arabic{foo}}{\usecounter{foo}}
+\setcounter{foo}{\value{bar}}
+\item Keep paragraphs short.
+
+\item It is unusual to have a single sentence paragraph in a technical
+  report\footnote{They are common in newspapers.}.
+
+\item Do not start a paragraph with ``However,'', ``Furthermore,'',
+  ``Moreover,'', ``Hence,'', etc.
+
+\setcounter{bar}{\value{foo}}
+\end{list}
+
+
+\subsection{Punctuation}
+\label{sec:punctuation}
+
+The correct use of commas can lead to heated debate.  Commas are used
+for many things: primarily to add a pause, add a parenthetical phrase
+or clause, and to delimit a list.
+
+Delimiting a list is one the most contentious uses of a comma.  I like
+the serial comma\footnote{See
+  \url{https://en.wikipedia.org/wiki/Serial_comma}.}, aka the Oxford
+or Harvard comma.  With the serial comma you would write ``beer, wine,
+and spirits'' instead of ``beer, wine and spirits''.  Sentences
+without the serial comma are more prone to ambiguity.
+
+\begin{list}{W-\arabic{foo}}{\usecounter{foo}}
+\setcounter{foo}{\value{bar}}
+
+\item Whichever comma style you use, the key is to be consistent.
+  This way the reader has more confidence that you know what you are
+  doing.
+
+\item Novice writers link sentences together with a comma.  Instead,
+  it is best to start a new sentence.  If you know what you are doing,
+  there are times where you can use a semicolon.
+
+\item Don't use contractions in a technical report!  For example,
+  haven't should be have not.
+
+\item The apostrophe indicates possession, i.e., belonging to someone
+  or something.  It is not just used to indicate that an s follows at
+  the end of the word!  This is a common mistake especially when
+  referring to an object by an initialism or acronym.  For example,
+  consider a UAV (Unmanned aerial vehicle).  The plural of UAV is
+  UAVs, so we would say ``Michael had two UAVs.'' but not ``Michael had
+  two UAV's.'' since this violates the use of an apostrophe to indicate
+  possession.  However, we would say ``The UAV's propellor was broken.''
+  since the propellor belongs to the UAV.
+
+\item When an initialism or acronym is first used it should be
+  defined.  For example, the Fast Fourier Transform (FFT) is an
+  efficient algorithm for computing a Discrete Fourier Transform
+  (DFT).
+
+\item Commas usually follow the abbreviations i.e. and e.g. in the same
+  way you would if you said ``that is'' or ``for example''.  
+
+\setcounter{bar}{\value{foo}}
+\end{list}
+
+
+\subsection{Spelling}
+\label{sec:spelling}
+
+\begin{list}{W-\arabic{foo}}{\usecounter{foo}}
+\setcounter{foo}{\value{bar}}
+\item The key is to be consistent and to use the spelling for the person who
+commissioned the report.  So for an assignment, that means New Zealand
+English.
+
+
+\item Correct spelling in a report is not optional.  Incorrect spelling
+implies that the author is stupid, indolent, or both. 
+
+\setcounter{bar}{\value{foo}}
+\end{list}
+
+
+\subsection{However, furthermore, hence, thus}
+\label{sec:however}
+
+Words such as however, furthermore, hence, thus, nevertheless,
+etc. are useful for presenting two sides of an argument.  However, it
+is bad form to randomly throw them into a sentence.  The best place is
+at the start of a sentence, immediately followed by a
+comma\footnote{Some people vociferously argue for a semicolon.},
+however, they can be used as linking words in the middle of a
+sentence.
+
+However you write, be careful with however since it has two meanings!
+In this example, however is not followed by a comma.
+
+
+\section{Presentation}
+\label{sec:presentation}
+
+
+This section considers the presentation of the report.  It considers
+recommendations for the main text in \refsec{text}, floats (such as
+figures, tables, and listings) in \refsec{figures}, equation
+formatting in \refsec{mathematics}, and unit formatting in
+\refsec{units}.
+
+
+\subsection{Text}
+\label{sec:text}
+
+
+\begin{list}{P-\arabic{foo}}{\usecounter{foo}}
+\item Use at least a size 11 font for the main text to make it easy to read.
+
+\item Do not make the margins too narrow.  A wide line is hard to scan
+  by the human eye.  A rule of thumb is that there should not be more
+  than 75 characters per line\footnote{This is why journals and
+    newspapers use multiple columns.}.
+
+\item Avoid headings without text between them.  Instead add some
+  introductory text to explain what the reader will find in the
+  sub-sections.
+
+\item With computer typesetting underlining is frowned upon.  Why?  I
+  suppose it does not look good and became unfashionable with the
+  demise of the typewriter.  Look at any book.  Instead, use emphasis
+  with \textbf{bold} or \textit{italic} fonts.
+
+\item It is a good idea to have program identifiers in a fixed size
+font when referred to in the report, for example,
+\code{serial\_tx\_byte}.
+
+\item Avoid widowed headings.  These are headings at the bottom of the
+  page with no following text.
+
+\item Avoid random capitalisations.  Be consistent.
+
+\end{list}
+
+
+
+\subsection{Figures, tables, listings}
+\label{sec:figures}
+
+\begin{list}{F-\arabic{foo}}{\usecounter{foo}}
+\item While magazines often have text around figures, this is
+  considered poor style for a report.  Yes, you can cram in more
+  content but does this make the report better?
+
+\item It is important that fonts in figures are not too small.  Be
+  careful, when scaling an image since this will alter the size of any
+  text.  If you need to reduce the size of an image, generate the text
+  in a larger font.
+
+\item It is best to avoid bitmapped images (GIF, BMP, JPEG, etc.) that
+contain text since aliasing makes the words hard to read.  If this is
+unavoidable, you will need a high resolution of at least 300 dots per
+inch.  In comparison, images displayed on web pages have a typical
+resolution of only 75 dots per inch.
+
+\item All figures and tables must have captions.  The caption should
+  be meaningful and describe the figure/table.  For example, see
+  \reffig{example_figure1}.
+
+\item The caption should end with a full stop.  This way you can add
+  other sentences and remain consistent with your punctuation.
+
+\item All figures/tables need to be referenced from the text.  For
+  example, \reffig{example_figure1} shows the system diagram.
+
+\item All figures and tables must be referred to by an identifier.
+  Do not say, ``see the figure below''.  Instead, say ``see
+  \reffig{example_figure1}''.
+
+\item It is common to refer to figures (tables) with the word Figure
+  (Table) capitalised so that it stands out in the text.  This helps
+  the reader to find where the figure (table) is described in the
+  text.
+
+\item Software listings should use a fixed size font so that columns
+line up.
+\end{list}
+
+
+\begin{figure}
+\vspace{1cm}
+  \begin{center}
+    System diagram to do
+\vspace{1cm}
+  \end{center}
+  \caption{System diagram of the foobar device showing the grand
+    frobnicator connected to the little thingamajig at the top.  The
+    super grandiloquencer is omitted for clarity.}
+\label{fig:example_figure1}
+\end{figure}
+
+
+\subsection{Mathematics}
+\label{sec:mathematics}
+
+\begin{list}{M-\arabic{foo}}{\usecounter{foo}}
+\item Equations are best separated from the surrounding text.  This
+  makes the equations easier to read and allows them to be numbered.
+
+\item To improve the flow of the prose, it is desirable that equations
+  are punctuated as part of a sentence.  For example, the voltage
+  drop, $V$, across a resistor due to a current, $I$, flowing through
+  it is given by Ohm's law,
+%
+\begin{equation}
+  V = R I,
+\label{eqn:ohms_law}
+\end{equation}
+%
+where $R$ is the resistance of the resistor.
+
+\item All variables in an equation must be defined when first used.
+  The dependent variables are most often defined after the equation.
+
+\item Equations that are referred to should be numbered.  It does not
+  hurt to number all equations.
+
+\item When referring to an equation it is desirable to mention it by
+  name as well as by its number.  For example, the voltage drop can be
+  found using Ohm's law \refeqn{ohms_law}.
+
+\item Is is common to refer to an equation by its number in
+  parentheses, for example, \refeqn{ohms_law} instead of
+  Equation~\ref{eqn:ohms_law}.
+
+\item Do not use the \verb+*+ symbol for multiplication in an
+  equation; use $\times$ or implied multiplication.  For example, $a
+  \times b $ or $a b$.
+
+\item Operators and words should be typeset in an upright Roman font,
+  not italics.  For example, $\cos$ not $cos$, $\ud x$ not $d x$.
+
+\item Words in superscripts and subscripts should be typeset in an
+  upright Roman font, not italics.  For example, $V_{\mathrm{rms}}$,
+$I_{\mathrm{max}}$.
+
+\end{list}
+
+
+
+\subsection{Units}
+\label{sec:units}
+
+\begin{list}{U-\arabic{foo}}{\usecounter{foo}}
+\item Technical reports should use SI units.  A unit named after a person is
+written in lower case unless it is abbreviated in which case the first
+letter is capitalised.    For example, 5\,joules or 5\,J.
+
+\item Prefixes are never capitalised---m means milli but M means mega;
+  an error of nine orders of magnitude.  Thus 4\,MHz, not 4\,mhz,
+  4~Mhz, etc.
+
+\item The SI standard says units should be separated by a small space
+  from the value, for example, 1\,GHz instead of 1GHz.  In
+  \LaTeX\ this can be achieved with \verb+1\,GHz+.  Note, you need an
+  unbreakable space since you do not want the number and unit on
+  separate lines.
+
+\item Units are typeset in an upright Roman font but not italics.  For
+  example, 42\,watts not $42\,watts$ and 42\,W not $42\,W$.
+
+\end{list}
+
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+This report provides suggestions for the structure, writing, and
+presentation of a technical report.  It is not a representative
+example of most technical reports; the recommendations are better
+summarised in an appendix.  Nevertheless, hopefully it will help you
+write an excellent technical report.
+
+
+
+\bibliography{report-guidelines}
+
+
+\appendix
+
+\section{Gaucheries}
+\label{sec:gaucheries}
+
+\newcommand{\gauchery}[2]{#1 $\rightarrow$ #2 \\}
+
+Richard Bates, a former professor of the ECE Department at UC,
+insisted that his students expunge all gaucheries from their
+writing. He especially hated redundant words and tautologies.  For
+example, you were likely to be struck by a thunderbolt if you said an
+instant of time.
+
+Here are some gaucheries to expunge from your writing with some
+replacements:
+\begin{flushleft}
+\gauchery{a variety of different}{a variety of}
+\gauchery{actual fact}{fact}
+\gauchery{adept at}{adept in}
+\gauchery{approximation of}{approximation to}
+\gauchery{at the conclusion of}{after}
+\gauchery{at the present time}{today, at present}
+\gauchery{at this point in time}{now}
+\gauchery{can be found}{is found}
+\gauchery{compensate for}{compensate}
+\gauchery{compensating for}{compensating}
+\gauchery{connect up}{connect}
+\gauchery{correct for}{correct}
+\gauchery{correcting for}{correcting}
+\gauchery{detailed}{discussed}
+\gauchery{doubt but}{doubt}
+\gauchery{due to the fact that}{because}
+\gauchery{during the course of}{during}
+\gauchery{during the time that}{while}
+\gauchery{frequently}{often}
+\gauchery{help but}{help}
+\gauchery{in the course of}{during}
+\gauchery{in order to}{to}
+\gauchery{in the vicinity of}{about}
+\gauchery{in the neighbourhood of}{near}
+\gauchery{in this day and age}{today}
+\gauchery{instant of time}{instant}
+\gauchery{in the event that}{if}
+\gauchery{irregardless}{regardless}
+\gauchery{join together}{join}
+\gauchery{known as}{called}
+\gauchery{most unique}{unique}
+\gauchery{new and innovative}{innovative}
+\gauchery{not got any}{no}
+\gauchery{offshore to}{offshore}
+\gauchery{prior to}{before}
+\gauchery{quite}{}
+\gauchery{the reason why}{because}
+\gauchery{to begin with}{to begin}
+\gauchery{used}{used, applied, employed, invoked, utilised (used is the most overused word in English)}
+\gauchery{very}{}
+\gauchery{very unique}{unique}
+\gauchery{whether or not}{whether}
+\end{flushleft}
+
+
+\section{Weasel words}
+\label{sec:weasel_words}
+
+Weasel words\footnote{\url{https://en.wikipedia.org/wiki/Weasel_word}.
+See also \citet{Howard_1983}, an interesting book on weasel words.}
+should be avoided in a technical report since they obscure clarity.
+They are phrases or words that ``sound good'' but do not actually
+convey any information.  For example, the word ``actually'' in the
+preceding sentence does not add information to the sentence.
+
+There main categories of weasel words are:
+%
+\begin{enumerate}
+\item Vague expressions: some people, experts, it is well known, many,
+  somewhat, in most respects, various, fairly, several, extremely,
+  exceedingly, quite, remarkably, few, mostly, largely, huge, tiny,
+  are a number, excellent, significantly, substantially, clearly,
+  vast, relatively, completely, very\footnote{Samuel Clemens (aka Mark
+    Twain) said that you should replace all uses of very with damn;
+    this way if you do not delete them then your editor will.}.
+
+\item Use of the passive voice to avoid specifying an authority: it is
+  said.
+
+\item Adverbs that weaken: often, probably, possibly, truly, actually,
+  basically, interestingly, surprisingly.
+\end{enumerate}
+
+
+\section{Other resources}
+
+\begin{itemize}
+\item Grammarly is a free online English grammar and spelling checker.
+  See \url{/www.grammarly.com}.
+\end{itemize}
+
+
+\end{document}
+
