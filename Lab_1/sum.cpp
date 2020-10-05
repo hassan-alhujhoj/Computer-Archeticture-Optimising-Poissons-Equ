@@ -40,7 +40,6 @@ struct thread_args {
 		sum += ta->vals[i];
 	}
 	ta->ret = sum;
-	// return NULL;
 }
 
 // Break up 'vals' into a series of slices, and spawn a thread to sum each

@@ -1,0 +1,23 @@
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
+\contentsline {section}{\numberline {2}Structure}{1}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Abstract}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Introduction}{2}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Conclusion}{2}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}References}{3}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Appendices}{3}{subsection.2.5}%
+\contentsline {section}{\numberline {3}Writing}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Tense}{3}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Sentences}{4}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Paragraphs}{4}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Punctuation}{4}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Spelling}{5}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}However, furthermore, hence, thus}{5}{subsection.3.6}%
+\contentsline {section}{\numberline {4}Presentation}{5}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Text}{6}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Figures, tables, listings}{6}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Mathematics}{7}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Units}{8}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Conclusion}{8}{section.5}%
+\contentsline {section}{\numberline {A}Gaucheries}{8}{appendix.A}%
+\contentsline {section}{\numberline {B}Weasel words}{9}{appendix.B}%
+\contentsline {section}{\numberline {C}Other resources}{10}{appendix.C}%

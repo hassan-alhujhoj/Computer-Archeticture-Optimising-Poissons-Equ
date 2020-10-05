@@ -4,10 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "poisson.hpp"
-#include <iostream>
-
-// Modified by Tim & Hassan
-using namespace std;
 
 int main (int argc, char *argv[])
 {
@@ -46,5 +42,6 @@ int main (int argc, char *argv[])
     
     poisson_dirichlet(source, potential, 0, xsize, ysize, zsize, delta,
                       numiters, numcores);
+
     return 0;
 }

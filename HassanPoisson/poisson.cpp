@@ -1,8 +1,45 @@
+#include <thread>
+#include <iostream>
+#include <stdint.h>
+#include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
-// Modified by Tim
+// Modified by Tim & Hassan
+using namespace std;
+
+// storing res
+#define STORE 	res -= ta.delta * ta.delta * ta.source[((z * ta.ysize) + y) * ta.xsize];\
+				res /= 6;\
+				ta.potential[((z * ta.ysize) + y) * ta.xsize] = res;
+//defining x, y and z bounderies				
+#define xMax res += ta.Vbound + ta.input[((z * ta.ysize) + y) * ta.xsize + (x - 1)];
+#define xMid res += ta.input[((z * ta.ysize) + y) * ta.xsize + (x + 1)] + ta.input[((z * ta.ysize) + y) * ta.xsize + (x - 1)];
+#define xMin res += ta.input[((z * ta.ysize) + y) * ta.xsize + (x + 1)] + ta.Vbound;
+
+#define yMax res += ta.Vbound + ta.input[((z * ta.ysize) + (y - 1)) * ta.xsize + x];
+#define yMid res+= ta.input[((z * ta.ysize) + (y + 1)) * ta.xsize + x] + ta.input[((z * ta.ysize) + (y - 1)) * ta.xsize + x]; 
+#define yMin res+= ta.input[((z * ta.ysize) + (y + 1)) * ta.xsize + x] + ta.Vbound;
+
+#define zMax res += ta.Vbound + ta.input[(((z - 1) * ta.ysize) + y) * ta.xsize + x];
+#define zMid res += ta.input[(((z + 1) * ta.ysize) + y) * ta.xsize + x] + ta.input[(((z - 1) * ta.ysize) + y) * ta.xsize + x];
+#define zMin res += ta.input[(((z + 1) * ta.ysize) + y) * ta.xsize + x] + ta.Vbound;
+
+typedef struct thread_args {
+	double * __restrict__ source;
+	double * __restrict__ potential;
+	double Vbound;
+	unsigned int xsize; 
+	unsigned int ysize; 
+	unsigned int zsize; 
+	double delta;
+	unsigned int numiters; 
+	unsigned int numcores;
+	double *input;
+	size_t size;
+	FILE *results;
+}arg;
 
 /// Solve Poisson's equation for a rectangular box with Dirichlet
 /// boundary conditions on each face.
@@ -29,216 +66,147 @@ void poisson_dirichlet (double * __restrict__ source,
 		fprintf(stderr, "malloc failure\n");
 		return;
 	}
-	
-	unsigned int x, y, z;
-	double res = 0;
-	
 	memcpy(input, source, size);
-	for (unsigned int iter = 0; iter < numiters; iter++) {
+}
+
+void *poissonThreads(void* argument){
+	arg ta; // an instant of struct arg
+	for (unsigned int iter = 0; iter < ta.numiters; iter++) {
 		// X on boundaries, Y and Z not on boundaries
-		for (z = 1; z < zsize - 1; z++) {
-			for (y = 1; y < ysize - 1; y++) {
-				res = 0;
-				
+		for (unsigned int z = 1; z < ta.zsize - 1; z++) {
+			for (unsigned int y = 1; y < ta.ysize - 1; y++) {
+				double res = 0;
+			
 				// x = 0
-				res = input[((z * ysize) + y) * xsize + 1] + 
-						input[((z * ysize) + (y - 1)) * xsize] +
-						input[((z * ysize) + (y + 1)) * xsize] + 
-						input[(((z - 1) * ysize) + y) * xsize] +
-						input[(((z + 1) * ysize) + y) * xsize] + 
-						Vbound;
-						
-				res -= delta * delta * source[((z * ysize) + y) * xsize];
-				res /= 6;
-				potential[((z * ysize) + y) * xsize] = res;
+				unsigned int x = 0;
+				xMin yMid zMid
+				STORE
 						
 				// x = xsize - 1
-				x = xsize - 1;
-				res = input[((z * ysize) + y) * xsize + (x - 1)] + 
-						input[((z * ysize) + (y - 1)) * xsize + x] +
-						input[((z * ysize) + (y + 1)) * xsize + x] + 
-						input[(((z - 1) * ysize) + y) * xsize + x] +
-						input[(((z + 1) * ysize) + y) * xsize + x] + 
-						Vbound;
-				
-				res -= delta * delta * source[((z * ysize) + y) * xsize + x];
-				res /= 6;
-				potential[((z * ysize) + y) * xsize + x] = res;
+				x = ta.xsize - 1;
+				xMax yMid zMid
+				STORE
 			}
 		}
 		// Y on boundaries, X and Z not on boundaries
-		for (x = 1; x < xsize - 1; x++) {
-			for (z = 1; z < zsize - 1; z++) {
-				res = 0;
+		for (unsigned int z = 1; z < ta.zsize - 1; z++) {
+			for (unsigned int x = 1; x < ta.xsize - 1; x++) {
+				double res = 0;
 				
 				// y = 0
-				res = input[((z * ysize) + 1) * xsize + x] + 
-						input[(z * ysize) * xsize + (x - 1)] + 
-						input[(z * ysize) * xsize + (x - 1)] + 
-						input[((z - 1) * ysize) * xsize + x] + 
-						input[((z + 1) * ysize) * xsize + x] + 
-						Vbound;
-
-				res -= delta * delta * source[z * ysize * xsize + x];
-				res /= 6;
-				potential[z * ysize * xsize + x] = res;
+				unsigned int y = 0;
+				xMid yMin zMid
+				STORE
 				
 				// y = ysize - 1
-				y = ysize - 1;
-				res = input[((z * ysize) + (y - 1)) * xsize + x] + 
-						input[((z * ysize) + y) * xsize + (x - 1)] +
-						input[((z * ysize) + y) * xsize + (x - 1)] + 
-						input[(((z - 1) * ysize) + y) * xsize + x] +
-						input[(((z + 1) * ysize) + y) * xsize + x] + 
-						Vbound;
-						
-				res -= delta * delta * source[((z * ysize) + y) * xsize + x];
-				res /= 6;
-				potential[((z * ysize) + y) * xsize + x] = res;
+				y = ta.ysize - 1;
+				xMid yMax zMid
+				STORE
 			}
 		}
 		// Z on boundaries, X and Y not on boundaries
-		for (x = 1; x < xsize - 1; x++) {
-			for (y = 1; y < ysize - 1; y++) {
-				res = 0;
+		for (unsigned int y = 1; y < ta.ysize - 1; y++) {
+			for (unsigned int x = 1; x < ta.xsize - 1; x++) {
+				double res = 0;
 				
 				// z = 0
-				res = input[(ysize + y) * xsize + x] +
-						input[y * xsize + (x - 1)] + 
-						input[y * xsize + (x + 1)] + 
-						input[(y - 1) * xsize + x] + 
-						input[(y + 1) * xsize + x] + 
-						Vbound;
-				
-				res -= delta * delta * source[y * xsize + x];
-				res /= 6;
-				potential[y * xsize + x] = res;
+				unsigned int z = 0;
+				xMid xMid zMin
+				STORE
 				
 				// z = zsize - 1
-				z = zsize - 1;
-				res = input[(((z - 1) * ysize) + y) * xsize + x] + 
-						input[((z * ysize) + (y - 1)) * xsize + x] +
-						input[((z * ysize) + (y + 1)) * xsize + x] + 
-						input[((z * ysize) + y) * xsize + (x - 1)] +
-						input[((z * ysize) + y) * xsize + (x + 1)] + 
-						Vbound;
-				
-				res -= delta * delta * source[((z * ysize) + y) * xsize + x];
-				res /= 6;
-				potential[((z * ysize) + y) * xsize + x] = res;
+				z = ta.zsize - 1;
+				xMid xMid zMax
+				STORE
 			}
 		}
 		
+		// Corner cases
 		// x = y = z = 0
-		x = 0; y = 0; z = 0;
-		res = 
-				3*Vbound +
-				input[((z * ysize) + y) * xsize + (x + 1)] +
-				input[((z * ysize) + (y + 1)) * xsize + x] +
-				input[(((z + 1) * ysize) + y) * xsize + x];
-				
-		res -= delta * delta * source[((z * ysize) + y) * xsize + x];
-		potential[((z * ysize) + y) * xsize + x] = res/6;
+		unsigned int x = 0, y = 0, z = 0;
+		double res = 0;
+		xMin yMin zMin
+		STORE
 									
 		// x = xsize-1, y = 0, z = 0
-		x = xsize - 1; y = 0; z = 0;
-		res = 
-				3*Vbound +
-				input[((z * ysize) + y) * xsize + (x - 1)] +
-				input[((z * ysize) + (y + 1)) * xsize + x] +
-				input[(((z + 1) * ysize) + y) * xsize + x];
-		
-		res -= delta * delta * source[((z * ysize) + y) * xsize + x];
-		potential[((z * ysize) + y) * xsize + x] = res/6;
+		x = ta.xsize - 1; y = 0; z = 0;
+		res = 0;
+		xMax yMin zMin
+		STORE
 											
 		// x = xsize-1, y = ysize-1, z = 0
-		x = xsize - 1; y = ysize - 1; z = 0;
-		res = 
-				3*Vbound +
-				input[((z * ysize) + y) * xsize + (x - 1)] +
-				input[((z * ysize) + (y - 1)) * xsize + x] +
-				input[(((z + 1) * ysize) + y) * xsize + x];
-				
-		res -= delta * delta * source[((z * ysize) + y) * xsize + x];
-		potential[((z * ysize) + y) * xsize + x] = res/6;
+		x = ta.xsize - 1; y = ta.ysize - 1; z = 0;
+		res = 0;
+		xMax yMax zMin
+		STORE
 					
 		// x = xsize-1, y = 0, z = zsize-1
-		x = xsize - 1; y = 0; z = zsize - 1;		
-		res = 
-				3*Vbound + 
-				input[((z * ysize) + y) * xsize + (x - 1)] +
-				input[((z * ysize) + (y + 1)) * xsize + x] +
-				input[(((z - 1) * ysize) + y) * xsize + x];
+		x = ta.xsize - 1; y = 0; z = ta.zsize - 1;		
+		res = 0;
+		xMax yMin zMax
+		STORE
 
-		res -= delta * delta * source[((z * ysize) + y) * xsize + x];
-		potential[((z * ysize) + y) * xsize + x] = res/6;
-		
 		// x = xsize-1, y = ysize-1, z = zsize-1
-		x = xsize - 1; y = ysize - 1; z = zsize - 1;
-		res = 
-				3*Vbound +
-				input[((z * ysize) + y) * xsize + (x - 1)] +
-				input[((z * ysize) + (y - 1)) * xsize + x] +
-				input[(((z - 1) * ysize) + y) * xsize + x];
+		x = ta.xsize - 1; y = ta.ysize - 1; z = ta.zsize - 1;
+		res = 0;
+		xMax yMax zMax
+		STORE
 
-		res -= delta * delta * source[((z * ysize) + y) * xsize + x];
-		potential[((z * ysize) + y) * xsize + x] = res/6;
 		// x = 0, y = ysize - 1, z = 0
-		x = 0; y = ysize - 1; z = 0;
-		res = 
-				3*Vbound + 		
-				input[((z * ysize) + y) * xsize + (x + 1)] +
-				input[((z * ysize) + (y  - 1)) * xsize + x] +
-				input[(((z + 1) * ysize) + y) * xsize + x];
-
-		res -= delta * delta * source[((z * ysize) + y) * xsize + x];
-		potential[((z * ysize) + y) * xsize + x] = res/6;
+		x = 0; y = ta.ysize - 1; z = 0;
+		res = 0;
+		xMin yMax zMin
+		STORE
 					
 		// x = 0, y = ysize - 1, z = zsize - 1
-		x = 0; y = ysize - 1; z = zsize - 1;
-		res = 
-				3*Vbound +
-				input[((z * ysize) + y) * xsize + (x + 1)] +
-				input[((z * ysize) + (y - 1)) * xsize + x] +
-				input[(((z - 1) * ysize) + y) * xsize + x];	
-				
-		res -= delta * delta * source[((z * ysize) + y) * xsize + x];
-		potential[((z * ysize) + y) * xsize + x] = res/6;
+		x = 0; y = ta.ysize - 1; z = ta.zsize - 1;
+		res = 0;
+		xMin yMax zMax
+		STORE
 									
 		// x = 0, y = 0, z = zsize - 1
-		x = 0; y = 0; z = zsize - 1;
-		res = 
-				3*Vbound +
-				input[((z * ysize) + y) * xsize + (x + 1)] +
-				input[((z * ysize) + (y + 1)) * xsize + x] +
-				input[(((z - 1) * ysize) + y) * xsize + x];		
-		
-		res -= delta * delta * source[((z * ysize) + y) * xsize + x];
-		potential[((z * ysize) + y) * xsize + x] = res/6;
+		x = 0; y = 0; z = ta.zsize - 1;
+		res = 0;
+		xMin yMin zMax
+		STORE
 		
 		// Normal cases (non-boundary)
-		for (x = 1; x < xsize - 1; x++) {
-			for (z = 1; z < zsize - 1; z++) {
-				for (y = 1; y < ysize - 1; y++) {
+		for (z = 1; z < ta.zsize - 1; z++) {
+			for (y = 1; y < ta.ysize - 1; y++) {
+				for (x = 1; x < ta.xsize - 1; x++) {
 					res = 0;
 
-					res += input[((z * ysize) + y) * xsize + (x + 1)];
-					res += input[((z * ysize) + y) * xsize + (x - 1)];
+					res += ta.input[((z * ta.ysize) + y) * ta.xsize + (x + 1)];
+					res += ta.input[((z * ta.ysize) + y) * ta.xsize + (x - 1)]; 
 
-					res += input[((z * ysize) + (y + 1)) * xsize + x];
-					res += input[((z * ysize) + (y - 1)) * xsize + x];
+					res += ta.input[((z * ta.ysize) + (y + 1)) * ta.xsize + x];
+					res += ta.input[((z * ta.ysize) + (y - 1)) * ta.xsize + x];
 
-					res += input[(((z + 1) * ysize) + y) * xsize + x];
-					res += input[(((z - 1) * ysize) + y) * xsize + x];
-
-					res -= delta * delta * source[((z * ysize) + y) * xsize + x];
-					res /= 6;
-
-					potential[((z * ysize) + y) * xsize + x] = res;
+					res += ta.input[(((z + 1) * ta.ysize) + y) * ta.xsize + x];
+					res += ta.input[(((z - 1) * ta.ysize) + y) * ta.xsize + x];
+					STORE
 				}
 			}
 		}
-		memcpy(input, potential, size);
+		memcpy(ta.input, ta.potential, ta.size);
 	}
-	free(input);
+
+	// ta.results = fopen("/results.txt","w");
+	// if(ta.results == NULL){
+	// 	printf("Error!");   
+	// 	exit(1);             
+	// }
+	// for(unsigned int z = 0; z < ta.zsize - 1; z++){
+	// 	for(unsigned int y = 0; y < ta.ysize - 1; y++){
+	// 		for (unsigned int x = 0; x < ta.xsize - 1; x++){
+	// 			unsigned int xOut = ta.potential[x];
+	// 			unsigned int yOut = ta.potential[y];
+	// 			unsigned int zOut = ta.potential[z];
+	// 			fprintf(ta.results,"%d, %d, %d\n",xOut, yOut, zOut);
+	// 		}
+	// 	}
+	// }fclose(ta.results);
+	free(ta.input);
+	return 0;
 }
+
