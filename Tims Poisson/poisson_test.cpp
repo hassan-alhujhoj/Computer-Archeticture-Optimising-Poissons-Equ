@@ -1,5 +1,4 @@
 /// \brief Test program for solving Poisson's equation using Jacobi relaxation
-/// \ Modified by Tim
 /// \author M. P. Hayes UCECE
 
 #include <stdlib.h>
@@ -43,13 +42,6 @@ int main (int argc, char *argv[])
     
     poisson_dirichlet(source, potential, 0, xsize, ysize, zsize, delta,
                       numiters, numcores);
-    
-    int n = xsize * ysize * zsize;
-    int i;
-    
-    for (i = 0; i < n; i++) {
-		printf("%lf\n", potential[i]);
-	}
 
     return 0;
 }
