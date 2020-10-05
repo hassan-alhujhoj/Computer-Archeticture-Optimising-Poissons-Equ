@@ -29,9 +29,9 @@ void poisson_dirichlet (double * __restrict__ source,
 	}
 	memcpy(input, source, size);
 	for (unsigned int iter = 0; iter < numiters; iter++) {
-		for (unsigned int x = 0; x < xsize; x++) {
-			for (unsigned int z = 0; z < zsize; z++) {
-				for (unsigned int y = 0; y < ysize; y++) {
+		for (unsigned int z = 0; z < zsize; z++) {
+			for (unsigned int y = 0; y < ysize; y++) {
+				for (unsigned int x = 0; x < xsize; x++) {
 					double res = 0;
 
 					if (x < xsize - 1)
