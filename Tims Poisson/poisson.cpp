@@ -36,7 +36,7 @@ void poisson_dirichlet (double * __restrict__ source,
 	memcpy(input, source, size);
 	for (unsigned int iter = 0; iter < numiters; iter++) {
 		// X on boundaries, Y and Z not on boundaries
-		for (z = 1; z < zsize - 1; z++) {
+		for (z = 1; z < ysize - 1; z++) {
 			for (y = 1; y < ysize - 1; y++) {
 				res = 0;
 				
@@ -67,8 +67,8 @@ void poisson_dirichlet (double * __restrict__ source,
 			}
 		}
 		// Y on boundaries, X and Z not on boundaries
-		for (x = 1; x < xsize - 1; x++) {
-			for (z = 1; z < zsize - 1; z++) {
+		for (z = 1; z < zsize - 1; z++) {
+			for (x = 1; x < xsize - 1; x++) {
 				res = 0;
 				
 				// y = 0
@@ -98,8 +98,8 @@ void poisson_dirichlet (double * __restrict__ source,
 			}
 		}
 		// Z on boundaries, X and Y not on boundaries
-		for (x = 1; x < xsize - 1; x++) {
-			for (y = 1; y < ysize - 1; y++) {
+		for (y = 1; y < ysize - 1; y++) {
+			for (x = 1; x < xsize - 1; x++) {
 				res = 0;
 				
 				// z = 0
@@ -217,9 +217,9 @@ void poisson_dirichlet (double * __restrict__ source,
 		potential[((z * ysize) + y) * xsize + x] = res/6;
 		
 		// Normal cases (non-boundary)
-		for (x = 1; x < xsize - 1; x++) {
-			for (z = 1; z < zsize - 1; z++) {
-				for (y = 1; y < ysize - 1; y++) {
+		for (z = 1; z < zsize - 1; z++) {
+			for (y = 1; y < ysize - 1; y++) {
+				for (x = 1; x < zsize - 1; x++) {
 					res = 0;
 
 					res += input[((z * ysize) + y) * xsize + (x + 1)];
