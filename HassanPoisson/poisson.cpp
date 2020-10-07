@@ -197,12 +197,12 @@ void *poissonThreads(void* argument){
 	// 	exit(1);             
 	// }
 	// for(unsigned int z = 0; z < ta.zsize - 1; z++){
-	// 	for(unsigned int y = 0; y < ta.ysize - 1; y++){
-	// 		for (unsigned int x = 0; x < ta.xsize - 1; x++){
-	// 			unsigned int xOut = ta.potential[x];
-	// 			unsigned int yOut = ta.potential[y];
-	// 			unsigned int zOut = ta.potential[z];
-	// 			fprintf(ta.results,"%d, %d, %d\n",xOut, yOut, zOut);
+	// 		for(unsigned int y = 0; y < ta.ysize - 1; y++){
+	// 			for (unsigned int x = 0; x < ta.xsize - 1; x++){
+		// 			unsigned int xOut = ta.potential[x];
+		// 			unsigned int yOut = ta.potential[y];
+		// 			unsigned int zOut = ta.potential[z];
+		// 			fprintf(ta.results,"%d, %d, %d\n",xOut, yOut, zOut);
 	// 		}
 	// 	}
 	// }fclose(ta.results);

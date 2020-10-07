@@ -1,5 +1,5 @@
-#include <thread>	// std::thread
-#include <iostream> // std::cout this function is similar to printf put output a steam
+#include <thread>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
