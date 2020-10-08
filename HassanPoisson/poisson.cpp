@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include "poisson.hpp"
+#include <cmath>
 
 // Modified by Tim & Hassan
 using namespace std;
@@ -39,8 +40,14 @@ typedef struct thread_args {
 	unsigned int numcores;
 	double *input;
 	size_t size;
+	unsigned int zStart;
+	unsigned int zEnd;
+	unsigned int blockSize;
+	unsigned int remainder;
 }arg;
-void poissonThreads(arg* ta); // declared this function
+
+// declared poissonThreads() function
+void poissonThreads(arg* ta); 
 
 /// Solve Poisson's equation for a rectangular box with Dirichlet
 /// boundary conditions on each face.
@@ -62,6 +69,11 @@ void poisson_dirichlet (double * __restrict__ source,
     // source[i, j, k] is accessed with source[((k * ysize) + j) * xsize + i]
     // potential[i, j, k] is accessed with potential[((k * ysize) + j) * xsize + i]    
     size_t size = (size_t)ysize * zsize * xsize * sizeof(double);
+    unsigned int zStart = 0;
+    unsigned int zEnd = 0;
+    unsigned int blockSize = 0;
+    unsigned int remainder = 0;
+
 	double *input = (double *)malloc(size);
 	if (!input) {
 		fprintf(stderr, "malloc failure\n");
@@ -69,25 +81,31 @@ void poisson_dirichlet (double * __restrict__ source,
 	}
 	memcpy(input, source, size);
 	arg ta = {
-		source : source,
-		potential : potential,
-		Vbound : Vbound,
-		xsize : xsize,
-		ysize : ysize,
-		zsize : zsize,
-		delta : delta,
-		numiters : numiters,
-		numcores : numcores,
-		input : input,
-		size : size
+		.source = source,
+		.potential = potential,
+		.Vbound = Vbound,
+		.xsize = xsize,
+		.ysize = ysize,
+		.zsize = zsize,
+		.delta = delta,
+		.numiters = numiters,
+		.numcores = numcores,
+		.input = input,
+		.size = size,
 	};
 	
-	
-	// if (thread_create(&ta[i].thread, NULL, thread_sum_func, &ta[i]) < 0)
-	// fprintf(stderr, "Could not create thread %d\n", i);
-	thread thread_x(poissonThreads, &ta);
+	//thread thread_x;
+	for (unsigned int i = 0; i < numcores; i++) {
+		blockSize = floor(zsize / numcores);
+		remainder = zsize % numcores;
+		zsize = zsize / numcores;
+		zStart = i * blockSize;
+			thread thread_x(poissonThreads, &ta);
 	thread_x.join();
-	
+	}
+
+	//thread thread_x(poissonThreads, &ta);
+	//thread_x.join();
 	cout << "One Thread created!\n";
 	
 	FILE *output;
@@ -108,7 +126,6 @@ void poisson_dirichlet (double * __restrict__ source,
 
 void poissonThreads(arg* ta){
 	cout << "You're in poissonThreads()\n";
-	
 	for (unsigned int iter = 0; iter < ta->numiters; iter++) {
 		
 		// Normal cases (non-boundary). Case: x y z
