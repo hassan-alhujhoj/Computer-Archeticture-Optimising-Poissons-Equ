@@ -108,24 +108,46 @@ void poisson_dirichlet (double * __restrict__ source,
 
 void poissonThreads(arg* ta){
 	cout << "You're in poissonThreads()\n";
+	
 	for (unsigned int iter = 0; iter < ta->numiters; iter++) {
-		// X on boundaries, Y and Z not on boundaries. Case: x' y z
+		
+		// Normal cases (non-boundary). Case: x y z
 		for (unsigned int z = 1; z < ta->zsize - 1; z++) {
 			for (unsigned int y = 1; y < ta->ysize - 1; y++) {
+				for (unsigned int x = 1; x < ta->xsize - 1; x++) {
+					double res = 0;
+
+					res += ta->input[((z * ta->ysize) + y) * ta->xsize + (x + 1)];
+					res += ta->input[((z * ta->ysize) + y) * ta->xsize + (x - 1)]; 
+
+					res += ta->input[((z * ta->ysize) + (y + 1)) * ta->xsize + x];
+					res += ta->input[((z * ta->ysize) + (y - 1)) * ta->xsize + x];
+
+					res += ta->input[(((z + 1) * ta->ysize) + y) * ta->xsize + x];
+					res += ta->input[(((z - 1) * ta->ysize) + y) * ta->xsize + x];
+					STORE
+				}
+			}
+		}
+		
+		// Z on boundaries, X and Y not on boundaries. Case: x y z'
+		for (unsigned int y = 1; y < ta->ysize - 1; y++) {
+			for (unsigned int x = 1; x < ta->xsize - 1; x++) {
 				double res = 0;
-			
-				// x = 0
-				unsigned int x = 0;
-				xMin yMid zMid
+				
+				// z = 0
+				unsigned int z = 0;
+				xMid yMid zMin
 				STORE
-						
+				
+				// z = ysize - 1
 				res = 0;
-				// x = xsize - 1
-				x = ta->xsize - 1;
-				xMax yMid zMid
+				z = ta->zsize - 1;
+				xMid yMid zMax
 				STORE
 			}
 		}
+		
 		// Y on boundaries, X and Z not on boundaries. Case: x y' z
 		for (unsigned int z = 1; z < ta->zsize - 1; z++) {
 			for (unsigned int x = 1; x < ta->xsize - 1; x++) {
@@ -143,41 +165,58 @@ void poissonThreads(arg* ta){
 				STORE
 			}
 		}
-		// Z on boundaries, X and Y not on boundaries. Case: x y z'
-		for (unsigned int y = 1; y < ta->ysize - 1; y++) {
-			for (unsigned int x = 1; x < ta->xsize - 1; x++) {
-				double res = 0;
-				
-				// z = 0
-				unsigned int z = 0;
-				xMid yMid zMin
-				STORE
-				
-				res = 0;
-				// z = zsize - 1
-				z = ta->zsize - 1;
-				xMid yMid zMax
-				STORE
-			}
-		}
+		
 		// Y and Z on boundaries, X not on boundaries. Case: x y' z'
 		for (unsigned int x = 1; x < ta->xsize - 1; x++) {
 			double res = 0;
-		
+	
 			// y = 0, z = 0
 			unsigned int y = 0;
 			unsigned int z = 0;
 			xMid yMin zMin
 			STORE
-					
+			
+			// y = 0, z = zsize - 1
 			res = 0;
+			y = 0;
+			z = ta->zsize - 1;
+			xMid yMin zMax
+			STORE
+			
+			// y = xsize - 1, z = 0
+			res = 0;
+			y = ta->xsize - 1;
+			z = 0;
+			xMid yMax zMin
+			STORE
+			
 			// y = xsize - 1
-			// z = zsize - 1
-			y = ta->ysize - 1;
+			// z = zsize - 1	
+			res = 0;
+			x = ta->xsize - 1;
 			z = ta->zsize - 1;
 			xMid yMax zMax
 			STORE
 		}
+		
+		// X on boundaries, Y and Z not on boundaries. Case: x' y z
+		for (unsigned int z = 1; z < ta->zsize - 1; z++) {
+			for (unsigned int y = 1; y < ta->ysize - 1; y++) {
+				double res = 0;
+			
+				// x = 0
+				unsigned int x = 0;
+				xMin yMid zMid
+				STORE
+						
+				res = 0;
+				// x = xsize - 1
+				x = ta->xsize - 1;
+				xMax yMid zMid
+				STORE
+			}
+		}
+		
 		// X and Z on boundaries, Y not on boundaries. Case: x' y z'
 		for (unsigned int y = 1; y < ta->ysize - 1; y++) {
 			double res = 0;
@@ -187,15 +226,30 @@ void poissonThreads(arg* ta){
 			unsigned int z = 0;
 			xMin yMid zMin
 			STORE
-					
+			
+			// x = 0, z = zsize - 1
 			res = 0;
+			x = 0;
+			z = ta->zsize - 1;
+			xMin yMid zMax
+			STORE
+			
+			// x = xsize - 1, z = 0
+			res = 0;
+			x = ta->xsize - 1;
+			z = 0;
+			xMax yMid zMin
+			STORE
+			
 			// x = xsize - 1
-			// z = zsize - 1
+			// z = zsize - 1	
+			res = 0;
 			x = ta->xsize - 1;
 			z = ta->zsize - 1;
 			xMax yMid zMax
 			STORE
 		}
+		
 		// X and Y on boundaries, Z not on boundaries. Case: x' y' z
 		for (unsigned int z = 1; z < ta->zsize - 1; z++) {
 			double res = 0;
@@ -205,10 +259,24 @@ void poissonThreads(arg* ta){
 			unsigned int y = 0;
 			xMin yMin zMid
 			STORE
-					
+			
+			// x = 0, y = zsize - 1
 			res = 0;
+			x = 0;
+			y = ta->ysize - 1;
+			xMin yMax zMid
+			STORE
+			
+			// x = xsize - 1, y = 0
+			res = 0;
+			x = ta->xsize - 1;
+			y = 0;
+			xMax yMin zMid
+			STORE
+			
 			// x = xsize - 1
-			// y = zsize - 1
+			// y = zsize - 1	
+			res = 0;
 			x = ta->xsize - 1;
 			y = ta->ysize - 1;
 			xMax yMax zMid
@@ -264,24 +332,6 @@ void poissonThreads(arg* ta){
 		xMin yMin zMax
 		STORE
 		
-		// Normal cases (non-boundary). Case: x y z
-		for (z = 1; z < ta->zsize - 1; z++) {
-			for (y = 1; y < ta->ysize - 1; y++) {
-				for (x = 1; x < ta->xsize - 1; x++) {
-					res = 0;
-
-					res += ta->input[((z * ta->ysize) + y) * ta->xsize + (x + 1)];
-					res += ta->input[((z * ta->ysize) + y) * ta->xsize + (x - 1)]; 
-
-					res += ta->input[((z * ta->ysize) + (y + 1)) * ta->xsize + x];
-					res += ta->input[((z * ta->ysize) + (y - 1)) * ta->xsize + x];
-
-					res += ta->input[(((z + 1) * ta->ysize) + y) * ta->xsize + x];
-					res += ta->input[(((z - 1) * ta->ysize) + y) * ta->xsize + x];
-					STORE
-				}
-			}
-		}
 		memcpy(ta->input, ta->potential, ta->size);
 	}
 }
