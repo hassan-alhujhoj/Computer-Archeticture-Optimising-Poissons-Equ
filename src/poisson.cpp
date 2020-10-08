@@ -29,9 +29,9 @@ void poisson_dirichlet (double * __restrict__ source,
 	}
 	memcpy(input, source, size);
 	for (unsigned int iter = 0; iter < numiters; iter++) {
-		for (unsigned int x = 0; x < xsize; x++) {
-			for (unsigned int z = 0; z < zsize; z++) {
-				for (unsigned int y = 0; y < ysize; y++) {
+		for (unsigned int z = 0; z < zsize; z++) {
+			for (unsigned int y = 0; y < ysize; y++) {
+				for (unsigned int x = 0; x < xsize; x++) {
 					double res = 0;
 
 					if (x < xsize - 1)
@@ -71,19 +71,5 @@ void poisson_dirichlet (double * __restrict__ source,
 		}
 		memcpy(input, potential, size);
 	}
-	FILE *results;
-	results = fopen("results.txt","w");
-	if(results == NULL){
-		printf("Error!");   
-		exit(1);             
-	}
-	for(unsigned int z = 0; z < zsize - 1; z++){
-			for(unsigned int y = 0; y < ysize - 1; y++){
-				for (unsigned int x = 0; x < xsize - 1; x++){
-					double result = potential[((z * ysize) + y) * xsize + x]; //access x, y or z
-					fprintf(results,"%.10lf\n",result);
-			}
-		} 
-	}fclose(results);
 	free(input);
 }

@@ -40,6 +40,7 @@ typedef struct thread_args {
 	double *input;
 	size_t size;
 }arg;
+void poissonThreads(arg* ta); // declared this function
 
 /// Solve Poisson's equation for a rectangular box with Dirichlet
 /// boundary conditions on each face.
@@ -67,30 +68,46 @@ void poisson_dirichlet (double * __restrict__ source,
 		return;
 	}
 	memcpy(input, source, size);
-	arg ta = (arg){.delta = delta, .xsize = xsize, .ysize = ysize, .zsize = zsize, .input = input, .potential = potential, .source = source, .numiters = numiters, .Vbound = 1};
-	thread thread_x;
-	thread(poissonThreads, &ta);
+	arg ta = {
+		source : source,
+		potential : potential,
+		Vbound : Vbound,
+		xsize : xsize,
+		ysize : ysize,
+		zsize : zsize,
+		delta : delta,
+		numiters : numiters,
+		numcores : numcores,
+		input : input,
+		size : size
+	};
+	
+	
+	// if (thread_create(&ta[i].thread, NULL, thread_sum_func, &ta[i]) < 0)
+	// fprintf(stderr, "Could not create thread %d\n", i);
+	thread thread_x(poissonThreads, &ta);
 	thread_x.join();
-
-	FILE *results;
-	results = fopen("results.txt","w");
-	if(results == NULL){
-		printf("Error!");   
+	
+	cout << "One Thread created!\n";
+	
+	FILE *output;
+	output = fopen("output.txt","w");
+	if(output == NULL){
+		printf("Error!");
 		exit(1);             
 	}
 	for(unsigned int z = 0; z < zsize - 1; z++){
 			for(unsigned int y = 0; y < ysize - 1; y++){
 				for (unsigned int x = 0; x < xsize - 1; x++){
 					double result = potential[((z * ysize) + y) * xsize + x]; //access x, y or z
-					fprintf(results,"%.10lf\n",result);
+					fprintf(output,"%.10lf\n",result);
 			}
 		} 
-	}fclose(results);
+	}fclose(output);
 }
 
-void *poissonThreads(void* argument){
-	printf("You're in poissonThreads()\n");
-	arg *ta = (arg*) argument;
+void poissonThreads(arg* ta){
+	cout << "You're in poissonThreads()\n";
 	for (unsigned int iter = 0; iter < ta->numiters; iter++) {
 		// X on boundaries, Y and Z not on boundaries. Case: x' y z
 		for (unsigned int z = 1; z < ta->zsize - 1; z++) {
@@ -267,6 +284,5 @@ void *poissonThreads(void* argument){
 		}
 		memcpy(ta->input, ta->potential, ta->size);
 	}
-	return 0;
 }
 

@@ -44,7 +44,7 @@ int main (int argc, char *argv[])
 
     source[((zsize / 2 * ysize) + ysize / 2) * xsize + xsize / 2] = 1.0;    
     
-    poisson_dirichlet(source, potential, 0, xsize, ysize, zsize, delta,
+    poisson_dirichlet(source, potential, 1, xsize, ysize, zsize, delta,
                       numiters, numcores);
     return 0;
 }

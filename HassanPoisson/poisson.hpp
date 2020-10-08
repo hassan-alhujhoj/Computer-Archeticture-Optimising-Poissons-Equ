@@ -1,8 +1,6 @@
 #ifndef POISSON_H
 #define POISSON_H
 
-void *poissonThreads(void* argument);
-
 // Solve Poisson's equation for a rectangular box with Dirichlet
 // boundary conditions on each face.
 void poisson_dirichlet (double *__restrict__ source,
