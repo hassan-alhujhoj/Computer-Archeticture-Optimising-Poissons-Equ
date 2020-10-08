@@ -13,7 +13,7 @@ using namespace std;
 // storing res
 #define STORE 	res -= ta->delta * ta->delta * ta->source[((z * ta->ysize) + y) * ta->xsize];\
 				res /= 6;\
-				ta->potential[((z * ta->ysize) + y) * ta->xsize] = res;
+				ta->potential[((z * ta->ysize) + y) * ta->xsize + x] = res;
 //defining x, y and z bounderies				
 #define xMax res += ta->Vbound + ta->input[((z * ta->ysize) + y) * ta->xsize + (x - 1)];
 #define xMid res += ta->input[((z * ta->ysize) + y) * ta->xsize + (x + 1)] + ta->input[((z * ta->ysize) + y) * ta->xsize + (x - 1)];
@@ -96,9 +96,9 @@ void poisson_dirichlet (double * __restrict__ source,
 		printf("Error!");
 		exit(1);             
 	}
-	for(unsigned int z = 0; z < zsize - 1; z++){
-			for(unsigned int y = 0; y < ysize - 1; y++){
-				for (unsigned int x = 0; x < xsize - 1; x++){
+	for(unsigned int z = 0; z < zsize; z++){
+			for(unsigned int y = 0; y < ysize; y++){
+				for (unsigned int x = 0; x < xsize; x++){
 					double result = potential[((z * ysize) + y) * xsize + x]; //access x, y or z
 					fprintf(output,"%.10lf\n",result);
 			}
@@ -185,7 +185,7 @@ void poissonThreads(arg* ta){
 			
 			// y = xsize - 1, z = 0
 			res = 0;
-			y = ta->xsize - 1;
+			y = ta->ysize - 1;
 			z = 0;
 			xMid yMax zMin
 			STORE
@@ -193,7 +193,7 @@ void poissonThreads(arg* ta){
 			// y = xsize - 1
 			// z = zsize - 1	
 			res = 0;
-			x = ta->xsize - 1;
+			y = ta->ysize - 1;
 			z = ta->zsize - 1;
 			xMid yMax zMax
 			STORE
