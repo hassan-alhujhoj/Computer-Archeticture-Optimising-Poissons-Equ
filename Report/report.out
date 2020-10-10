@@ -1,23 +1,7 @@
 \BOOKMARK [1][-]{section.1}{Introduction}{}% 1
-\BOOKMARK [1][-]{section.2}{Structure}{}% 2
-\BOOKMARK [2][-]{subsection.2.1}{Abstract}{section.2}% 3
-\BOOKMARK [2][-]{subsection.2.2}{Introduction}{section.2}% 4
-\BOOKMARK [2][-]{subsection.2.3}{Conclusion}{section.2}% 5
-\BOOKMARK [2][-]{subsection.2.4}{References}{section.2}% 6
-\BOOKMARK [2][-]{subsection.2.5}{Appendices}{section.2}% 7
-\BOOKMARK [1][-]{section.3}{Writing}{}% 8
-\BOOKMARK [2][-]{subsection.3.1}{Tense}{section.3}% 9
-\BOOKMARK [2][-]{subsection.3.2}{Sentences}{section.3}% 10
-\BOOKMARK [2][-]{subsection.3.3}{Paragraphs}{section.3}% 11
-\BOOKMARK [2][-]{subsection.3.4}{Punctuation}{section.3}% 12
-\BOOKMARK [2][-]{subsection.3.5}{Spelling}{section.3}% 13
-\BOOKMARK [2][-]{subsection.3.6}{However, furthermore, hence, thus}{section.3}% 14
-\BOOKMARK [1][-]{section.4}{Presentation}{}% 15
-\BOOKMARK [2][-]{subsection.4.1}{Text}{section.4}% 16
-\BOOKMARK [2][-]{subsection.4.2}{Figures, tables, listings}{section.4}% 17
-\BOOKMARK [2][-]{subsection.4.3}{Mathematics}{section.4}% 18
-\BOOKMARK [2][-]{subsection.4.4}{Units}{section.4}% 19
-\BOOKMARK [1][-]{section.5}{Conclusion}{}% 20
-\BOOKMARK [1][-]{appendix.A}{Gaucheries}{}% 21
-\BOOKMARK [1][-]{appendix.B}{Weasel words}{}% 22
-\BOOKMARK [1][-]{appendix.C}{Other resources}{}% 23
+\BOOKMARK [1][-]{section.2}{Method}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Threading}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Cache Optimisation}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{Code Optimisation}{section.2}% 5
+\BOOKMARK [1][-]{section.3}{Results}{}% 6
+\BOOKMARK [1][-]{section.4}{Conclusion}{}% 7
