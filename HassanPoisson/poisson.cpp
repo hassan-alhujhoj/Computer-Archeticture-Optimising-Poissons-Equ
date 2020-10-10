@@ -102,13 +102,14 @@ void poisson_dirichlet (double * __restrict__ source,
 		zsize = zsize / numcores;
 		zStart = i * blockSize;
 		thread_vector[i] = thread(poissonThreads, &ta);
-		
+		cout << "Thread " << i << " has been created!\n";
 	}
 	for(unsigned int i = 0; i < numcores; i++){
 		thread_vector[i].join();
+		cout << "Thread " << i << " has been joined!\n";
 	}
 
-	cout << "One Thread created!\n";
+	
 	
 	FILE *output;
 	output = fopen("output.txt","w");
