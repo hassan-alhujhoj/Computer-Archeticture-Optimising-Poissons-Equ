@@ -1,13 +1,13 @@
-#include <thread>
-#include <iostream>
 #include <stdint.h>
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <pthread.h>
 #include "poisson.hpp"
+#include <thread>
+#include <iostream>
 #include <cmath>
+#include <vector>
 
 // Modified by Tim & Hassan
 using namespace std;
@@ -94,19 +94,22 @@ void poisson_dirichlet (double * __restrict__ source,
 		.size = size,
 	};
 	
-	//thread thread_x;
+	thread thread_x;
+	vector<thread> thread_vector(numcores);
 	for (unsigned int i = 0; i < numcores; i++) {
 		blockSize = floor(zsize / numcores);
 		remainder = zsize % numcores;
 		zsize = zsize / numcores;
 		zStart = i * blockSize;
-			thread thread_x(poissonThreads, &ta);
-	thread_x.join();
+		thread_vector[i] = thread(poissonThreads, &ta);
+		cout << "Thread " << i << " has been created!\n";
+	}
+	for(unsigned int i = 0; i < numcores; i++){
+		thread_vector[i].join();
+		cout << "Thread " << i << " has been joined!\n";
 	}
 
-	//thread thread_x(poissonThreads, &ta);
-	//thread_x.join();
-	cout << "One Thread created!\n";
+	
 	
 	FILE *output;
 	output = fopen("output.txt","w");
