@@ -41,14 +41,25 @@
 \pagebreak
 	
 \section{Introduction}
-	This is the introduction. 
+	Numerical methods are often used to solve problems that are difficult or impossible to solve analytically. Often numerical methods repeat loops for a large number of iterations. For large problems, or for problems that require high accuracy, it may be desirable to optimise the speed of the numerical method. Optimising the speed of a numerical method can be done by a number of ways. The code itself that implements the method can be optimised to reduce the amount of time spent in repeated loops, and to make efficent use of the computers cache memory. Splitting the method into threads can also speed up the performance of numerical methods by executing multiple instructions on the same core at the same time. In this report, the Jacobi relaxation method is optimized by code and cache optimisation, and multithreading. An analysis is done on how these techniques affect the overall time performance of the algorithm. 
 
 
 \section{Method}
-	This is the Methods section. 
+	This project involved taking an implementation of the Jacobi relaxation numerical method, and optimising its efficiency using cache, profilling, and code analysis. Multithreading was used to optimise the usage of the computers cores. 
+	\\
+	The project was performed on a University CAE computer with the following architecture overview:
+	\begin{itemize}
+		\item GenuineIntel x$86\_64$
+		\item 8 cores
+		\item 2 threads per core
+		\item 812.2 MHz CPU speed
+		\item 32Kb Level 1 data and instruction caches
+		\item 256Kb Level 2 cache
+		\item 8192Kb Level 3 cache
+	\end{itemize}
 
 \subsection{Threading}
-	This is a subsection. 
+	
 
 \subsection{Cache Optimisation}
 
