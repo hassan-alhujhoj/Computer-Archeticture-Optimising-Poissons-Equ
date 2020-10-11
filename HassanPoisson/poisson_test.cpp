@@ -58,7 +58,7 @@ int main (int argc, char *argv[])
 	nanoseconds = (end.tv_sec - start.tv_sec) * 1000000000ULL +
 		(end.tv_nsec - start.tv_nsec);
 	
-	printf("Took %.6ld" PRIu64 " ms\n",
+	printf("Took %" PRIu64 " ms\n",
 		nanoseconds / 1000000);
     
     // clear data in output.txt
