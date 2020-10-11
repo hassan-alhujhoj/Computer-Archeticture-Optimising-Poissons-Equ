@@ -22,7 +22,7 @@ int main (int argc, char *argv[])
     double *potential;
     unsigned int N;
     unsigned int numiters;
-    unsigned int numcores;    
+    unsigned int numcores;
     unsigned int xsize;
     unsigned int ysize;
     unsigned int zsize;    
@@ -75,7 +75,8 @@ int main (int argc, char *argv[])
 				for(unsigned int y = 0; y < ysize; y++){
 					for (unsigned int x = 0; x < xsize; x++){
 						double result = potential[((z * ysize) + y) * xsize + x]; //access x, y or z
-						fprintf(output,"%.10lf \n",result);
+						fprintf(output,"%d, %d, %d, %.10lf\n"
+                                , x, y, z, result);
 				}
 			} 
 		}

@@ -3,21 +3,15 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdint.h>
+#include "poisson.hpp"
 #include <iostream>
 #include <fstream>
-#include <pthread.h>
-#include "poisson.hpp"
-#include <inttypes.h>
 
 // Modified by Tim & Hassan
 using namespace std;
 
 int main (int argc, char *argv[])
 {
-    struct timespec start, end;
-	uint64_t nanoseconds;
-
     double *source;
     double *potential;
     unsigned int N;
@@ -51,15 +45,8 @@ int main (int argc, char *argv[])
 
     source[((zsize / 2 * ysize) + ysize / 2) * xsize + xsize / 2] = 1.0;    
     
-    clock_gettime(CLOCK_MONOTONIC, &start);
     poisson_dirichlet(source, potential, 1, xsize, ysize, zsize, delta,
                       numiters, numcores);
-	clock_gettime(CLOCK_MONOTONIC, &end);
-	nanoseconds = (end.tv_sec - start.tv_sec) * 1000000000ULL +
-		(end.tv_nsec - start.tv_nsec);
-	
-	printf("Took %" PRIu64 " ms\n",
-		nanoseconds / 1000000);
     
     // clear data in output.txt
     ofstream ofs;
@@ -75,7 +62,8 @@ int main (int argc, char *argv[])
 				for(unsigned int y = 0; y < ysize; y++){
 					for (unsigned int x = 0; x < xsize; x++){
 						double result = potential[((z * ysize) + y) * xsize + x]; //access x, y or z
-						fprintf(output,"%.10lf \n",result);
+						fprintf(output,"x = %d, y = %d, z = %d, result = %.10lf\n"
+                                , x, y, z, result);
 				}
 			} 
 		}

@@ -11,6 +11,7 @@
 #include <string>
 #include <cstdio>
 #include <cstdlib>
+#include <mutex>
 
 // Modified by Tim & Hassan
 using namespace std;
@@ -70,8 +71,6 @@ void poisson_dirichlet (double * __restrict__ source,
                         unsigned int xsize, unsigned int ysize, unsigned int zsize, double delta,
                         unsigned int numiters, unsigned int numcores)
 {
-    // source[i, j, k] is accessed with source[((k * ysize) + j) * xsize + i]
-    // potential[i, j, k] is accessed with potential[((k * ysize) + j) * xsize + i]
     size_t size = (size_t)ysize * zsize * xsize * sizeof(double);
     unsigned int zStart = 0;
     unsigned int zEnd = 0;
@@ -100,33 +99,47 @@ void poisson_dirichlet (double * __restrict__ source,
 	
 	vector<thread> thread_vector(numcores);
 	for (unsigned int i = 0; i < numcores; i++) {
-		blockSize = floor(zsize / numcores); cout << "\nblocksize:" << blockSize << endl;
-		remainder = zsize % numcores; cout << "\nremainder:" <<  remainder << endl;
-		zStart = i * blockSize; cout << "\nzStart:" << zStart << endl;
-		zEnd += blockSize; cout << "\nzEnd:" << zEnd << endl;
-		thread_vector[i] = thread(poissonThreads, &ta);
-		printf("\nThread %d has been created!\n", i);
-	}
+		blockSize = floor(zsize / numcores);
+		cout << "\nblocksize:" << blockSize << endl;
+		
+		remainder = zsize % numcores; 
+		cout << "\nremainder:" <<  remainder << endl;
+		
+		zStart = i * blockSize; 
+		cout << "\nzStart:" << zStart << endl;
+		
+		if(i == numcores - 1){
+			zEnd = (i * blockSize) + (blockSize - 1) + remainder;
+			cout << "\nzEnd:" << zEnd << endl;
+		} else {
+			zEnd = (i * blockSize) + (blockSize - 1);
+			cout << "\nzEnd:" << zEnd << endl;
+		}
 
+		thread_vector[i] = thread(poissonThreads, &ta);
+		//printf("\nThread %d has been created!\n", i);
+	}
+	
 	for(unsigned int i = 0; i < numcores; i++){
 		if(thread_vector[i].joinable()){
 			thread_vector[i].join();
 		} 
-		printf("\nThread %d has been joined!\n", i);
+		//printf("\nThread %d has been joined!\n", i);
 	}
+	free(input);
 }
 
 void poissonThreads(arg* ta){
-	cout << "\nYou're in poissonThreads()\n";
-	
+	// Lock mutex to one thread to access at a time
+	mutex m; 
+	m.lock();
+
 	// This is a flag to make sure that the cases don't run a boundery condition when it doesn't contain a boundery z
 	unsigned int fl_zmin;
-	//unsigned int fl_zmax;
 	if(ta->zStart == 0){
 		fl_zmin = 1;
 		ta->zStart++;
 	} else if (ta->zStart == ta->zEnd - 1){
-		//fl_zmax = 1;
 		ta->zEnd--;
 	}
 
@@ -172,7 +185,7 @@ void poissonThreads(arg* ta){
 		}
 
 		// Y on boundaries, X and Z not on boundaries. Case: x y' z
-		for (unsigned int z = ta->zStart; z < ta->zEnd; z+=ta->blockSize) {
+		for (unsigned int z = ta->zStart; z < ta->zEnd + 1; z++) {
 			for (unsigned int x = 1; x < ta->xsize - 1; x++) {
 				double res = 0;
 				
@@ -224,7 +237,7 @@ void poissonThreads(arg* ta){
 			}
 		}
 		// X on boundaries, Y and Z not on boundaries. Case: x' y z
-		for (unsigned int z = ta->zStart; z < ta->zEnd; z+=ta->blockSize) {
+		for (unsigned int z = ta->zStart; z < ta->zEnd + 1; z++) {
 			for (unsigned int y = 1; y < ta->ysize - 1; y++) {
 				double res = 0;
 			
@@ -277,7 +290,7 @@ void poissonThreads(arg* ta){
 		}
 
 		// X and Y on boundaries, Z not on boundaries. Case: x' y' z
-		for (unsigned int z = ta->zStart; z < ta->zEnd; z+=ta->blockSize) {
+		for (unsigned int z = ta->zStart; z < ta->zEnd + 1; z++) {
 			double res = 0;
 		
 			// x = 0, y = 0
@@ -319,25 +332,33 @@ void poissonThreads(arg* ta){
 			
 			res = 0;							
 			// x = xsize-1, y = 0, z = 0
-			x = ta->xsize - 1; y = 0; z = 0;
+			x = ta->xsize - 1; 
+			y = 0; 
+			z = 0;
 			xMax yMin zMin
 			STORE
 			
 			res = 0;									
 			// x = xsize-1, y = ysize-1, z = 0
-			x = ta->xsize - 1; y = ta->ysize - 1; z = 0;
+			x = ta->xsize - 1; 
+			y = ta->ysize - 1; 
+			z = 0;
 			xMax yMax zMin
 			STORE
 			
 			res = 0;			
 			// x = xsize-1, y = 0, z = zsize-1
-			x = ta->xsize - 1; y = 0; z = ta->zsize - 1;
+			x = ta->xsize - 1; 
+			y = 0; 
+			z = ta->zsize - 1;
 			xMax yMin zMax
 			STORE
 			
 			res = 0;
 			// x = xsize-1, y = ysize-1, z = zsize-1
-			x = ta->xsize - 1; y = ta->ysize - 1; z = ta->zsize - 1;
+			x = ta->xsize - 1; 
+			y = ta->ysize - 1; 
+			z = ta->zsize - 1;
 			xMax yMax zMax
 			STORE
 			
@@ -349,17 +370,31 @@ void poissonThreads(arg* ta){
 			
 			res = 0;			
 			// x = 0, y = ysize - 1, z = zsize - 1
-			x = 0; y = ta->ysize - 1; z = ta->zsize - 1;
+			x = 0; 
+			y = ta->ysize - 1; 
+			z = ta->zsize - 1;
 			xMin yMax zMax
 			STORE
 			
 			res = 0;							
 			// x = 0, y = 0, z = zsize - 1
-			x = 0; y = 0; z = ta->zsize - 1;
+			x = 0; 
+			y = 0; 
+			z = ta->zsize - 1;
 			xMin yMin zMax
 			STORE
 		}
+
+		double *tmp = ta->input;
+		ta->input = ta->potential;
+		ta->potential = tmp;
+	}
+	
+	if(ta->numiters % 2 == 0){
 		memcpy(ta->input, ta->potential, ta->size);
 	}
+
+	// Unlock the mutex
+	m.unlock();
 }
 

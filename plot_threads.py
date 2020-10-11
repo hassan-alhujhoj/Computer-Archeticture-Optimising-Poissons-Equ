@@ -2,18 +2,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-filename = "sum_results.csv"
+filename = "Lab_1/sum.txt"
 
-data = np.loadtxt(filename, delimiter=',', dtype='int')
-nthreads, count, time_ms = data.T
+data = np.loadtxt(filename, delimiter=',', dtype='float')
+t_sum, nthreads, time1, count1, n_sum, time2, count2 = data.T
 
 threads = [[], [], [], [], [], [], [], [], [], []]
 counts = [[], [], [], [], [], [], [], [], [], []]
 
 for i in range(0, len(nthreads)):
-	th = nthreads[i] - 1
-	threads[th].append(time_ms[i])
-	counts[th].append(count[i])
+	th = int(nthreads[i] - 1)
+	threads[th].append(time1[i])
+	counts[th].append(count1[i])
 
 
 

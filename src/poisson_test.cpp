@@ -62,7 +62,8 @@ int main (int argc, char *argv[])
 				for(unsigned int y = 0; y < ysize; y++){
 					for (unsigned int x = 0; x < xsize; x++){
 						double result = potential[((z * ysize) + y) * xsize + x]; //access x, y or z
-						fprintf(output,"%.10lf \n",result);
+						fprintf(output,"x = %d, y = %d, z = %d, result = %.10lf\n"
+                                , x, y, z, result);
 				}
 			} 
 		}
