@@ -4,15 +4,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <iostream>
+#include <fstream>
 #include <pthread.h>
 #include "poisson.hpp"
 #include <inttypes.h>
 
+// Modified by Tim & Hassan
+using namespace std;
+
 int main (int argc, char *argv[])
 {
-	struct timespec start, end;
+    struct timespec start, end;
 	uint64_t nanoseconds;
-	
+
     double *source;
     double *potential;
     unsigned int N;
@@ -47,7 +52,7 @@ int main (int argc, char *argv[])
     source[((zsize / 2 * ysize) + ysize / 2) * xsize + xsize / 2] = 1.0;    
     
     clock_gettime(CLOCK_MONOTONIC, &start);
-    poisson_dirichlet(source, potential, 0, xsize, ysize, zsize, delta,
+    poisson_dirichlet(source, potential, 1, xsize, ysize, zsize, delta,
                       numiters, numcores);
 	clock_gettime(CLOCK_MONOTONIC, &end);
 	nanoseconds = (end.tv_sec - start.tv_sec) * 1000000000ULL +
@@ -55,6 +60,30 @@ int main (int argc, char *argv[])
 	
 	printf("Took %" PRIu64 " ms\n",
 		nanoseconds / 1000000);
-
+    
+    // clear data in output.txt
+    ofstream ofs;
+    ofs.open("output.txt", ofstream::out | ofstream::trunc);
+    ofs.close();
+    // write data in output.txt
+    FILE *output = fopen("output.txt", "w+");
+	if(!output) {
+        perror("\nFile opening failed!\n");
+        cout << EXIT_FAILURE;
+    }else{
+		for(unsigned int z = 0; z < zsize; z++){
+				for(unsigned int y = 0; y < ysize; y++){
+					for (unsigned int x = 0; x < xsize; x++){
+						double result = potential[((z * ysize) + y) * xsize + x]; //access x, y or z
+						fprintf(output,"%.10lf \n",result);
+				}
+			} 
+		}
+	}
+	if (ferror(output))
+		puts("\nI/O error when reading\n");
+	else if (feof(output))
+		puts("\nEnd of file reached successfully!\n");
+	fclose(output);
     return 0;
 }

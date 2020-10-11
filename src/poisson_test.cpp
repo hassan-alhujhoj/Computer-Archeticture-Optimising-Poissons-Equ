@@ -4,6 +4,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "poisson.hpp"
+#include <iostream>
+#include <fstream>
+
+// Modified by Tim & Hassan
+using namespace std;
 
 int main (int argc, char *argv[])
 {
@@ -42,6 +47,30 @@ int main (int argc, char *argv[])
     
     poisson_dirichlet(source, potential, 1, xsize, ysize, zsize, delta,
                       numiters, numcores);
-
+    
+    // clear data in output.txt
+    ofstream ofs;
+    ofs.open("output.txt", ofstream::out | ofstream::trunc);
+    ofs.close();
+    // write data in output.txt
+    FILE *output = fopen("output.txt", "w+");
+	if(!output) {
+        perror("\nFile opening failed!\n");
+        cout << EXIT_FAILURE;
+    }else{
+		for(unsigned int z = 0; z < zsize; z++){
+				for(unsigned int y = 0; y < ysize; y++){
+					for (unsigned int x = 0; x < xsize; x++){
+						double result = potential[((z * ysize) + y) * xsize + x]; //access x, y or z
+						fprintf(output,"%.10lf \n",result);
+				}
+			} 
+		}
+	}
+	if (ferror(output))
+		puts("\nI/O error when reading\n");
+	else if (feof(output))
+		puts("\nEnd of file reached successfully!\n");
+	fclose(output);
     return 0;
 }
