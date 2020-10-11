@@ -8,9 +8,13 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <string>
+#include <cstdio>
+#include <cstdlib>
 
 // Modified by Tim & Hassan
 using namespace std;
+
 // storing res
 #define STORE 	res -= ta->delta * ta->delta * ta->source[((z * ta->ysize) + y) * ta->xsize];\
 				res /= 6;\
@@ -46,7 +50,7 @@ typedef struct thread_args {
 	unsigned int remainder;
 }arg;
 
-// declared poissonThreads() function
+// declares poissonThreads() function
 void poissonThreads(arg* ta); 
 
 /// Solve Poisson's equation for a rectangular box with Dirichlet
@@ -67,7 +71,7 @@ void poisson_dirichlet (double * __restrict__ source,
                         unsigned int numiters, unsigned int numcores)
 {
     // source[i, j, k] is accessed with source[((k * ysize) + j) * xsize + i]
-    // potential[i, j, k] is accessed with potential[((k * ysize) + j) * xsize + i]    
+    // potential[i, j, k] is accessed with potential[((k * ysize) + j) * xsize + i]
     size_t size = (size_t)ysize * zsize * xsize * sizeof(double);
     unsigned int zStart = 0;
     unsigned int zEnd = 0;
@@ -94,45 +98,42 @@ void poisson_dirichlet (double * __restrict__ source,
 		.size = size,
 	};
 	
-	thread thread_x;
 	vector<thread> thread_vector(numcores);
 	for (unsigned int i = 0; i < numcores; i++) {
-		blockSize = floor(zsize / numcores);
-		remainder = zsize % numcores;
-		zsize = zsize / numcores;
-		zStart = i * blockSize;
+		blockSize = floor(zsize / numcores); cout << "\nblocksize:" << blockSize << endl;
+		remainder = zsize % numcores; cout << "\nremainder:" <<  remainder << endl;
+		zStart = i * blockSize; cout << "\nzStart:" << zStart << endl;
+		zEnd += blockSize; cout << "\nzEnd:" << zEnd << endl;
 		thread_vector[i] = thread(poissonThreads, &ta);
-		cout << "Thread " << i << " has been created!\n";
-	}
-	for(unsigned int i = 0; i < numcores; i++){
-		thread_vector[i].join();
-		cout << "Thread " << i << " has been joined!\n";
+		printf("\nThread %d has been created!\n", i);
 	}
 
-	
-	
-	FILE *output;
-	output = fopen("output.txt","w");
-	if(output == NULL){
-		printf("Error!");
-		exit(1);             
-	}
-	for(unsigned int z = 0; z < zsize; z++){
-			for(unsigned int y = 0; y < ysize; y++){
-				for (unsigned int x = 0; x < xsize; x++){
-					double result = potential[((z * ysize) + y) * xsize + x]; //access x, y or z
-					fprintf(output,"%.10lf\n",result);
-			}
+	for(unsigned int i = 0; i < numcores; i++){
+		if(thread_vector[i].joinable()){
+			thread_vector[i].join();
 		} 
-	}fclose(output);
+		printf("\nThread %d has been joined!\n", i);
+	}
 }
 
 void poissonThreads(arg* ta){
-	cout << "You're in poissonThreads()\n";
+	cout << "\nYou're in poissonThreads()\n";
+	
+	// This is a flag to make sure that the cases don't run a boundery condition when it doesn't contain a boundery z
+	unsigned int fl_zmin;
+	//unsigned int fl_zmax;
+	if(ta->zStart == 0){
+		fl_zmin = 1;
+		ta->zStart++;
+	} else if (ta->zStart == ta->zEnd - 1){
+		//fl_zmax = 1;
+		ta->zEnd--;
+	}
+
 	for (unsigned int iter = 0; iter < ta->numiters; iter++) {
 		
 		// Normal cases (non-boundary). Case: x y z
-		for (unsigned int z = 1; z < ta->zsize - 1; z++) {
+		for (unsigned int z = ta->zStart; z < ta->zEnd + 1; z++) {
 			for (unsigned int y = 1; y < ta->ysize - 1; y++) {
 				for (unsigned int x = 1; x < ta->xsize - 1; x++) {
 					double res = 0;
@@ -151,25 +152,27 @@ void poissonThreads(arg* ta){
 		}
 		
 		// Z on boundaries, X and Y not on boundaries. Case: x y z'
-		for (unsigned int y = 1; y < ta->ysize - 1; y++) {
-			for (unsigned int x = 1; x < ta->xsize - 1; x++) {
-				double res = 0;
-				
-				// z = 0
-				unsigned int z = 0;
-				xMid yMid zMin
-				STORE
-				
-				// z = ysize - 1
-				res = 0;
-				z = ta->zsize - 1;
-				xMid yMid zMax
-				STORE
+		if(fl_zmin){
+			for (unsigned int y = 1; y < ta->ysize - 1; y++) {
+				for (unsigned int x = 1; x < ta->xsize - 1; x++) {
+					double res = 0;
+					
+					// z = 0
+					unsigned int z = 0;
+					xMid yMid zMin
+					STORE
+					
+					// z = ysize - 1
+					res = 0;
+					z = ta->zsize - 1;
+					xMid yMid zMax
+					STORE
+				}
 			}
 		}
-		
+
 		// Y on boundaries, X and Z not on boundaries. Case: x y' z
-		for (unsigned int z = 1; z < ta->zsize - 1; z++) {
+		for (unsigned int z = ta->zStart; z < ta->zEnd; z+=ta->blockSize) {
 			for (unsigned int x = 1; x < ta->xsize - 1; x++) {
 				double res = 0;
 				
@@ -187,40 +190,41 @@ void poissonThreads(arg* ta){
 		}
 		
 		// Y and Z on boundaries, X not on boundaries. Case: x y' z'
-		for (unsigned int x = 1; x < ta->xsize - 1; x++) {
-			double res = 0;
-	
-			// y = 0, z = 0
-			unsigned int y = 0;
-			unsigned int z = 0;
-			xMid yMin zMin
-			STORE
-			
-			// y = 0, z = zsize - 1
-			res = 0;
-			y = 0;
-			z = ta->zsize - 1;
-			xMid yMin zMax
-			STORE
-			
-			// y = xsize - 1, z = 0
-			res = 0;
-			y = ta->ysize - 1;
-			z = 0;
-			xMid yMax zMin
-			STORE
-			
-			// y = xsize - 1
-			// z = zsize - 1	
-			res = 0;
-			y = ta->ysize - 1;
-			z = ta->zsize - 1;
-			xMid yMax zMax
-			STORE
-		}
+		if(fl_zmin){
+			for (unsigned int x = 1; x < ta->xsize - 1; x++) {
+				double res = 0;
 		
+				// y = 0, z = 0
+				unsigned int y = 0;
+				unsigned int z = 0;
+				xMid yMin zMin
+				STORE
+				
+				// y = 0, z = zsize - 1
+				res = 0;
+				y = 0;
+				z = ta->zsize - 1;
+				xMid yMin zMax
+				STORE
+				
+				// y = xsize - 1, z = 0
+				res = 0;
+				y = ta->ysize - 1;
+				z = 0;
+				xMid yMax zMin
+				STORE
+				
+				// y = xsize - 1
+				// z = zsize - 1	
+				res = 0;
+				y = ta->ysize - 1;
+				z = ta->zsize - 1;
+				xMid yMax zMax
+				STORE
+			}
+		}
 		// X on boundaries, Y and Z not on boundaries. Case: x' y z
-		for (unsigned int z = 1; z < ta->zsize - 1; z++) {
+		for (unsigned int z = ta->zStart; z < ta->zEnd; z+=ta->blockSize) {
 			for (unsigned int y = 1; y < ta->ysize - 1; y++) {
 				double res = 0;
 			
@@ -238,40 +242,42 @@ void poissonThreads(arg* ta){
 		}
 		
 		// X and Z on boundaries, Y not on boundaries. Case: x' y z'
-		for (unsigned int y = 1; y < ta->ysize - 1; y++) {
-			double res = 0;
-		
-			// x = 0, z = 0
-			unsigned int x = 0;
-			unsigned int z = 0;
-			xMin yMid zMin
-			STORE
+		if(fl_zmin){
+			for (unsigned int y = 1; y < ta->ysize - 1; y++) {
+				double res = 0;
 			
-			// x = 0, z = zsize - 1
-			res = 0;
-			x = 0;
-			z = ta->zsize - 1;
-			xMin yMid zMax
-			STORE
-			
-			// x = xsize - 1, z = 0
-			res = 0;
-			x = ta->xsize - 1;
-			z = 0;
-			xMax yMid zMin
-			STORE
-			
-			// x = xsize - 1
-			// z = zsize - 1	
-			res = 0;
-			x = ta->xsize - 1;
-			z = ta->zsize - 1;
-			xMax yMid zMax
-			STORE
+				// x = 0, z = 0
+				unsigned int x = 0;
+				unsigned int z = 0;
+				xMin yMid zMin
+				STORE
+				
+				// x = 0, z = zsize - 1
+				res = 0;
+				x = 0;
+				z = ta->zsize - 1;
+				xMin yMid zMax
+				STORE
+				
+				// x = xsize - 1, z = 0
+				res = 0;
+				x = ta->xsize - 1;
+				z = 0;
+				xMax yMid zMin
+				STORE
+				
+				// x = xsize - 1
+				// z = zsize - 1	
+				res = 0;
+				x = ta->xsize - 1;
+				z = ta->zsize - 1;
+				xMax yMid zMax
+				STORE
+			}
 		}
-		
+
 		// X and Y on boundaries, Z not on boundaries. Case: x' y' z
-		for (unsigned int z = 1; z < ta->zsize - 1; z++) {
+		for (unsigned int z = ta->zStart; z < ta->zEnd; z+=ta->blockSize) {
 			double res = 0;
 		
 			// x = 0, y = 0
@@ -304,54 +310,55 @@ void poissonThreads(arg* ta){
 		}
 
 		// Corner cases. Case: x' y' z'
-		// x = y = z = 0
-		unsigned int x = 0, y = 0, z = 0;
-		double res = 0;
-		xMin yMin zMin
-		STORE
-		
-		res = 0;							
-		// x = xsize-1, y = 0, z = 0
-		x = ta->xsize - 1; y = 0; z = 0;
-		xMax yMin zMin
-		STORE
-		
-		res = 0;									
-		// x = xsize-1, y = ysize-1, z = 0
-		x = ta->xsize - 1; y = ta->ysize - 1; z = 0;
-		xMax yMax zMin
-		STORE
-		
-		res = 0;			
-		// x = xsize-1, y = 0, z = zsize-1
-		x = ta->xsize - 1; y = 0; z = ta->zsize - 1;
-		xMax yMin zMax
-		STORE
-		
-		res = 0;
-		// x = xsize-1, y = ysize-1, z = zsize-1
-		x = ta->xsize - 1; y = ta->ysize - 1; z = ta->zsize - 1;
-		xMax yMax zMax
-		STORE
-		
-		res = 0;
-		// x = 0, y = ysize - 1, z = 0
-		x = 0; y = ta->ysize - 1; z = 0;
-		xMin yMax zMin
-		STORE
-		
-		res = 0;			
-		// x = 0, y = ysize - 1, z = zsize - 1
-		x = 0; y = ta->ysize - 1; z = ta->zsize - 1;
-		xMin yMax zMax
-		STORE
-		
-		res = 0;							
-		// x = 0, y = 0, z = zsize - 1
-		x = 0; y = 0; z = ta->zsize - 1;
-		xMin yMin zMax
-		STORE
-		
+		if(fl_zmin){
+			// x = y = z = 0
+			unsigned int x = 0, y = 0, z = 0;
+			double res = 0;
+			xMin yMin zMin
+			STORE
+			
+			res = 0;							
+			// x = xsize-1, y = 0, z = 0
+			x = ta->xsize - 1; y = 0; z = 0;
+			xMax yMin zMin
+			STORE
+			
+			res = 0;									
+			// x = xsize-1, y = ysize-1, z = 0
+			x = ta->xsize - 1; y = ta->ysize - 1; z = 0;
+			xMax yMax zMin
+			STORE
+			
+			res = 0;			
+			// x = xsize-1, y = 0, z = zsize-1
+			x = ta->xsize - 1; y = 0; z = ta->zsize - 1;
+			xMax yMin zMax
+			STORE
+			
+			res = 0;
+			// x = xsize-1, y = ysize-1, z = zsize-1
+			x = ta->xsize - 1; y = ta->ysize - 1; z = ta->zsize - 1;
+			xMax yMax zMax
+			STORE
+			
+			res = 0;
+			// x = 0, y = ysize - 1, z = 0
+			x = 0; y = ta->ysize - 1; z = 0;
+			xMin yMax zMin
+			STORE
+			
+			res = 0;			
+			// x = 0, y = ysize - 1, z = zsize - 1
+			x = 0; y = ta->ysize - 1; z = ta->zsize - 1;
+			xMin yMax zMax
+			STORE
+			
+			res = 0;							
+			// x = 0, y = 0, z = zsize - 1
+			x = 0; y = 0; z = ta->zsize - 1;
+			xMin yMin zMax
+			STORE
+		}
 		memcpy(ta->input, ta->potential, ta->size);
 	}
 }
