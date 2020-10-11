@@ -9,7 +9,7 @@ def test_write(filename, iters=1, size=[101], program_name="main", numcores=[1])
     f = open(filename, "w")
     
     f.write("make clean\nmake all\n")
-    f.write("./main 101 10 1\nmv gmon.out gmon.sum\n")
+    f.write("./poisson_test 101 10 1\nmv gmon.out gmon.sum\n")
     
     for i in numcores:
         for j in size:
