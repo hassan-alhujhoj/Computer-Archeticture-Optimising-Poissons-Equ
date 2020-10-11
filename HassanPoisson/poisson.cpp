@@ -13,7 +13,7 @@
 #include <cstdlib>
 #include <mutex>
 
-// Modified by Tim & Hassan
+// Modified by Tim Hadler & Hassan Alhujhoj
 using namespace std;
 
 // storing res
@@ -117,14 +117,12 @@ void poisson_dirichlet (double * __restrict__ source,
 		}
 
 		thread_vector[i] = thread(poissonThreads, &ta);
-		//printf("\nThread %d has been created!\n", i);
 	}
 	
 	for(unsigned int i = 0; i < numcores; i++){
 		if(thread_vector[i].joinable()){
 			thread_vector[i].join();
 		} 
-		//printf("\nThread %d has been joined!\n", i);
 	}
 	free(input);
 }
@@ -227,8 +225,7 @@ void poissonThreads(arg* ta){
 				xMid yMax zMin
 				STORE
 				
-				// y = xsize - 1
-				// z = zsize - 1	
+				// y = xsize - 1, z = zsize - 1	
 				res = 0;
 				y = ta->ysize - 1;
 				z = ta->zsize - 1;
@@ -313,8 +310,7 @@ void poissonThreads(arg* ta){
 			xMax yMin zMid
 			STORE
 			
-			// x = xsize - 1
-			// y = zsize - 1	
+			// x = xsize - 1, y = zsize - 1	
 			res = 0;
 			x = ta->xsize - 1;
 			y = ta->ysize - 1;

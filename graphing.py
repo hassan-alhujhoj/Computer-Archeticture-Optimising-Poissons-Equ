@@ -27,7 +27,7 @@ def main():
     small_size = [101, 201, 301, 401, 501]
     #Small Tests
     #test_write("profile.sh", 10, size=size, numcores=numcores)
-    test_write("profile.sh", 10, size=size, numcores=numcores)
+    test_write("profile.sh", 10, size=small_size, numcores=numcores)
     
     #Large Tests
 #    test_write("profile.sh", 10, size=size, numcores=numcores)

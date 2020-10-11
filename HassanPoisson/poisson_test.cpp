@@ -1,5 +1,6 @@
 /// \brief Test program for solving Poisson's equation using Jacobi relaxation
 /// \author M. P. Hayes UCECE
+/// Modified by Tim Hadler & Hassan Alhujhoj
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -10,7 +11,7 @@
 #include "poisson.hpp"
 #include <inttypes.h>
 
-// Modified by Tim & Hassan
+
 using namespace std;
 
 int main (int argc, char *argv[])
@@ -65,6 +66,7 @@ int main (int argc, char *argv[])
     ofstream ofs;
     ofs.open("output.txt", ofstream::out | ofstream::trunc);
     ofs.close();
+
     // write data in output.txt
     FILE *output = fopen("output.txt", "w+");
 	if(!output) {
@@ -81,6 +83,7 @@ int main (int argc, char *argv[])
 			} 
 		}
 	}
+    
 	if (ferror(output))
 		puts("\nI/O error when reading\n");
 	else if (feof(output))
